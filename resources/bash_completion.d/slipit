@@ -41,8 +41,8 @@ function _slipit() {
     _comp_filter "opts"
     _comp_filter_shorts "opts"
 
-	mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}") 
-	return 0
+    mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}") 
+    return 0
 }
 
 complete -F _slipit slipit
