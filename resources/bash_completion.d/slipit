@@ -1,0 +1,48 @@
+#!/bin/bash
+
+type _comp_filter &> /dev/null || return
+type _comp_contains &> /dev/null || return
+type _comp_filter_shorts &> /dev/null || return
+
+function _slipit() {
+
+    local cur prev words cword opts archive_types
+    _init_completion || return
+
+    COMPREPLY=()
+
+    archive_types="zip tar tgz bz2"
+
+    if _comp_contains "--depth --increment --prefix --separator --sequence --static" $prev; then
+        return 0
+
+    elif [ "$prev" == "--archive-type" ]; then
+        opts="${archive_types}"
+
+	elif [[ "$cur" == -* ]]; then
+		opts="--help"
+        opts="${opts} --archive-type"
+        opts="${opts} --clear"
+        opts="${opts} --debug"
+        opts="${opts} --depth"
+        opts="${opts} --increment"
+        opts="${opts} --overwrite"
+        opts="${opts} --prefix"
+        opts="${opts} --multi"
+        opts="${opts} --separator"
+        opts="${opts} --sequence"
+        opts="${opts} --static"
+
+    else
+        _filedir
+        return 0
+    fi
+
+    _comp_filter "opts"
+    _comp_filter_shorts "opts"
+
+	mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}") 
+	return 0
+}
+
+complete -F _slipit slipit
