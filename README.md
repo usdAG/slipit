@@ -33,8 +33,8 @@ autocompletion.
 ```console
 [user@box ~]$ slipit -h
 usage: slipit [-h] [--archive-type {zip,tar,tgz,bz2}] [--clear] [--debug] [--depth int] [--increment int]
-              [--overwrite] [--prefix string] [--multi] [--separator char] [--sequence seq] [--static content]
-              [--symlink target] [filename ...] archive
+              [--overwrite] [--prefix string] [--multi] [--remove name] [--separator char] [--sequence seq]
+              [--static content] [--symlink target] [filename ...] archive
 
 slipit v1.0.0 - Utility for creating ZipSlip archives.
 
@@ -53,6 +53,7 @@ optional arguments:
   --overwrite           overwrite the target archive instead of appending to it
   --prefix string       prefix to use before the file name
   --multi               create an archive containing multiple payloads
+  --remove name         remove files from the archive (glob matching)
   --separator char      path separator (default=\)
   --sequence seq        use a custom traversal sequence (default=..{sep})
   --static content      use static content for each input file

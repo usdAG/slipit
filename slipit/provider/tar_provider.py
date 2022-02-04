@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import tarfile
+import fnmatch
 from pathlib import Path
 from slipit.archive_provider import ArchiveProvider
 
@@ -105,6 +106,19 @@ class TarProvider(ArchiveProvider):
         with tarfile.open(name, 'r:') as tar_file:
             tar_file.list()
 
+    def remove_files(name: str, archived_name: str) -> None:
+        '''
+        Remove files matching the specified filename from the archive.
+
+        Parameters:
+            name            file system path of the archive
+            archived_name   filename to match files against
+
+        Returns:
+            None
+        '''
+        TarProvider.remove_from_archive(name, archived_name, True)
+
     def clear_archive(name: str, payload: str) -> None:
         '''
         Clear the specified archive from path traversal sequences.
@@ -112,6 +126,23 @@ class TarProvider(ArchiveProvider):
         Parameters:
             name            file system path of the archive
             payload         path traversal payload to look for
+
+        Returns:
+            None
+        '''
+        TarProvider.remove_from_archive(name, payload, False)
+
+    def remove_from_archive(name: str, payload: str, use_fnmatch: bool) -> None:
+        '''
+        Remove all files matching the specified payload from the archive.
+        The payload is either matched by using an 'in' statement on the
+        archive filenames (use_fnmatch=False) or by using fnmatch
+        (use_fnmatch=True).
+
+        Parameters:
+            name            file system path of the archive
+            payload         payload to match filenames against
+            fnmatch         whether to use fnmatch for matching
 
         Returns:
             None
@@ -136,7 +167,10 @@ class TarProvider(ArchiveProvider):
 
             for member, content in member_content_map.items():
 
-                if payload not in member.name:
+                if use_fnmatch and not fnmatch.fnmatch(member.name, payload):
+                    output.addfile(member, content)
+
+                if not use_fnmatch and payload not in member.name:
                     output.addfile(member, content)
 
 

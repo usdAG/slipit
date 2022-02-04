@@ -141,6 +141,7 @@ parser.add_argument('--increment', metavar='int', type=int, help='add incrementa
 parser.add_argument('--overwrite', action='store_true', help='overwrite the target archive instead of appending to it')
 parser.add_argument('--prefix', metavar='string', default='', help='prefix to use before the file name')
 parser.add_argument('--multi', action='store_true', help='create an archive containing multiple payloads')
+parser.add_argument('--remove', metavar='name', help='remove files from the archive (glob matching)')
 parser.add_argument('--separator', metavar='char', default='\\', help='path separator (default=\\)')
 parser.add_argument('--sequence', metavar='seq', help='use a custom traversal sequence (default=..{sep})')
 parser.add_argument('--static', metavar='content', help='use static content for each input file')
@@ -159,6 +160,10 @@ def main():
         if args.clear:
             payload = f'..{args.separator}'
             provider.clear_archive(args.archive, payload)
+            return
+
+        if args.remove:
+            provider.remove_files(args.archive, args.remove)
             return
 
         if len(args.filename) < 1:

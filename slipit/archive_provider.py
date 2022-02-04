@@ -124,24 +124,38 @@ class ArchiveProvider:
         for name in archived_names:
             self.append_symlink(target, name)
 
-    def list_archive(self) -> None:
+    def remove_files(name: str, archived_name: str) -> None:
         '''
-        Print a list of files contained within the archive.
+        Remove matching files from the archive.
 
         Parameters:
-            None
+            name            file system path to the archive
+            archived_name   filenames to remove from the archive
 
         Returns:
             None
         '''
         raise NotImplementedError
 
-    def clear_archive(self) -> None:
+    def list_archive(name: str) -> None:
         '''
-        Clear the archive from all path traversal payloads.
+        Print a list of files contained within the archive.
 
         Parameters:
+            name            file system path to the archive
+
+        Returns:
             None
+        '''
+        raise NotImplementedError
+
+    def clear_archive(name: str, payload: str) -> None:
+        '''
+        Clear the specified archive from path traversal sequences.
+
+        Parameters:
+            name            file system path of the archive
+            payload         path traversal payload to look for
 
         Returns:
             None

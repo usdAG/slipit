@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import fnmatch
 import tarfile
 from pathlib import Path
 from slipit.archive_provider import ArchiveProvider
@@ -76,6 +77,19 @@ class CompressedTarProvider(TarProvider):
         with tarfile.open(name, f'r:{alg}') as tar_file:
             tar_file.list()
 
+    def remove_files(name: str, archived_name: str, alg: str = 'gz') -> None:
+        '''
+        Remove files matching the specified filename from the archive.
+
+        Parameters:
+            name            file system path of the archive
+            archived_name   filename to match files against
+
+        Returns:
+            None
+        '''
+        CompressedTarProvider.remove_from_archive(name, archived_name, True, alg)
+
     def clear_archive(name: str, payload: str, alg: str = 'gz') -> None:
         '''
         Clear the specified archive from all path traversal sequences.
@@ -83,6 +97,24 @@ class CompressedTarProvider(TarProvider):
         Parameters:
             name            file system path of the archive
             payload         path traversal payload to look for
+            alg             compression algorithm
+
+        Returns:
+            None
+        '''
+        CompressedTarProvider.remove_from_archive(name, payload, False, alg)
+
+    def remove_from_archive(name: str, payload: str, use_fnmatch: bool, alg: str ='gz') -> None:
+        '''
+        Remove all files matching the specified payload from the archive.
+        The payload is either matched by using an 'in' statement on the
+        archive filenames (use_fnmatch=False) or by using fnmatch
+        (use_fnmatch=True).
+
+        Parameters:
+            name            file system path of the archive
+            payload         payload to match filenames against
+            fnmatch         whether to use fnmatch for matching
             alg             compression algorithm
 
         Returns:
@@ -108,7 +140,10 @@ class CompressedTarProvider(TarProvider):
 
             for member, content in member_content_map.items():
 
-                if payload not in member.name:
+                if use_fnmatch and not fnmatch.fnmatch(member.name, payload):
+                    output.addfile(member, content)
+
+                if not use_fnmatch and payload not in member.name:
                     output.addfile(member, content)
 
 
@@ -130,6 +165,11 @@ class GZipProvider(CompressedTarProvider):
         '''
         '''
         return CompressedTarProvider.list_archive(name, 'gz')
+
+    def remove_files(name: str, payload: str) -> None:
+        '''
+        '''
+        return CompressedTarProvider.remove_files(name, payload, 'gz')
 
     def clear_archive(name: str, payload: str) -> None:
         '''
@@ -156,6 +196,11 @@ class BZip2Provider(CompressedTarProvider):
         '''
         '''
         return CompressedTarProvider.list_archive(name, 'bz2')
+
+    def remove_files(name: str, payload: str) -> None:
+        '''
+        '''
+        return CompressedTarProvider.remove_files(name, payload, 'bz2')
 
     def clear_archive(name: str, payload: str) -> BZip2Provider:
         '''
