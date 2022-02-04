@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import zipfile
+import warnings
 from pathlib import Path
 from slipit.archive_provider import ArchiveProvider
 
@@ -47,7 +48,9 @@ class ZipProvider(ArchiveProvider):
         Returns:
             None
         '''
-        self.archive.write(filename, archived_name)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', message='Duplicate name')
+            self.archive.write(filename, archived_name)
 
     def append_blob(self, blob: bytes, archived_name: str) -> None:
         '''
@@ -60,7 +63,9 @@ class ZipProvider(ArchiveProvider):
         Returns:
             None
         '''
-        self.archive.writestr(archived_name, blob)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', message='Duplicate name')
+            self.archive.writestr(archived_name, blob)
 
     def list_archive(name: str) -> None:
         '''
