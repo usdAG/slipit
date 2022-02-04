@@ -32,6 +32,7 @@ function _slipit() {
         opts="${opts} --separator"
         opts="${opts} --sequence"
         opts="${opts} --static"
+        opts="${opts} --symlink"
 
     else
         _filedir

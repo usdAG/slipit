@@ -131,7 +131,7 @@ def get_provider(output_file: str) -> str:
 
 parser = argparse.ArgumentParser(description='''slipit v1.0.0 - Utility for creating ZipSlip archives.''')
 
-parser.add_argument('input', nargs='*', default=[], action='extend', help='input files to include into the archive')
+parser.add_argument('filename', nargs='*', default=[], action='extend', help='filenames to include into the archive')
 parser.add_argument('archive', help='target archive file')
 parser.add_argument('--archive-type', dest='type', choices=['zip', 'tar', 'tgz', 'bz2'], help='archive type to use')
 parser.add_argument('--clear', action='store_true', help='clear the specified archive from traversal items')
@@ -144,6 +144,7 @@ parser.add_argument('--multi', action='store_true', help='create an archive cont
 parser.add_argument('--separator', metavar='char', default='\\', help='path separator (default=\\)')
 parser.add_argument('--sequence', metavar='seq', help='use a custom traversal sequence (default=..{sep})')
 parser.add_argument('--static', metavar='content', help='use static content for each input file')
+parser.add_argument('--symlink', metavar='target', help='add as symlink (only available for tar archives)')
 
 
 def main():
@@ -160,27 +161,33 @@ def main():
             provider.clear_archive(args.archive, payload)
             return
 
-        if len(args.input) < 1:
+        if len(args.filename) < 1:
             provider.list_archive(args.archive)
             return
 
-        if not args.static:
-            check_readable(args.input)
+        if not args.static and not args.symlink:
+            check_readable(args.filename)
 
         archive = provider.create(args.archive) if args.overwrite else provider.open(args.archive)
 
-        for file in args.input:
+        for file in args.filename:
 
             payloads = get_traversals(args, Path(file).name)
 
             if args.static:
                 archive.append_blobs(args.static.encode('utf-8'), payloads)
 
+            elif args.symlink:
+                archive.append_symlinks(args.symlink, payloads)
+
             else:
                 archive.append_files(file, payloads)
 
     except FileNotFoundError as e:
         print(f'[-] Unable to find the specified file: {e}')
+
+    except NotImplementedError:
+        print('[-] The requested feature is not implemented for the specified archive type.')
 
     except Exception as e:
         print('[-] Unexcepted exception occured.')

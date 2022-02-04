@@ -32,13 +32,14 @@ autocompletion.
 
 ```console
 [user@box ~]$ slipit -h
-usage: slipit [-h] [--archive-type {zip,tar,tgz,bz2}] [--clear] [--debug] [--depth int] [--increment int] [--overwrite]
-              [--prefix string] [--multi] [--separator char] [--sequence seq] [--static content] [input ...] archive
+usage: slipit [-h] [--archive-type {zip,tar,tgz,bz2}] [--clear] [--debug] [--depth int] [--increment int]
+              [--overwrite] [--prefix string] [--multi] [--separator char] [--sequence seq] [--static content]
+              [--symlink target] [filename ...] archive
 
 slipit v1.0.0 - Utility for creating ZipSlip archives.
 
 positional arguments:
-  input                 input files to include into the archive
+  filename              filenames to include into the archive
   archive               target archive file
 
 optional arguments:
@@ -55,6 +56,7 @@ optional arguments:
   --separator char      path separator (default=\)
   --sequence seq        use a custom traversal sequence (default=..{sep})
   --static content      use static content for each input file
+  --symlink target      add as symlink (only available for tar archives)
 ```
 
 *slipit* expects an arbitrary number of input files and the targeted output archive as mandatory command line

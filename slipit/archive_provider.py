@@ -97,6 +97,33 @@ class ArchiveProvider:
         for name in archived_names:
             self.append_blob(blob, name)
 
+    def append_symlink(self, target: str, archived_name: str) -> None:
+        '''
+        Append a symlink to the archive.
+
+        Parameters:
+            target          symlink target
+            archived_name   file name within the archive
+
+        Returns:
+            None
+        '''
+        raise NotImplementedError
+
+    def append_symlinks(self, target: str, archived_names: [str]) -> None:
+        '''
+        Append a symlink to the archive with several different archive names.
+
+        Parameters:
+            target          symlink target
+            archived_names  list of file names within the archvie
+
+        Returns:
+            None
+        '''
+        for name in archived_names:
+            self.append_symlink(target, name)
+
     def list_archive(self) -> None:
         '''
         Print a list of files contained within the archive.

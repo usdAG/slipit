@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import io
 import tarfile
-import tempfile
 from pathlib import Path
 from slipit.archive_provider import ArchiveProvider
 
@@ -52,7 +51,7 @@ class TarProvider(ArchiveProvider):
 
     def append_blob(self, blob: bytes, archived_name: str) -> None:
         '''
-        Append a data blob to the archive
+        Append a data blob to the archive.
 
         Parameters:
             blob                blob of bytes to append to the archive
@@ -61,10 +60,34 @@ class TarProvider(ArchiveProvider):
         Returns:
             None
         '''
-        with tempfile.NamedTemporaryFile() as tmp:
-            tmp.write(blob)
-            tmp.flush()
-            self.archive.add(tmp.name, archived_name)
+        info = tarfile.TarInfo()
+
+        info.type = tarfile.REGTYPE
+        info.name = archived_name
+        info.size = len(blob)
+
+        file_like = io.BytesIO(blob)
+
+        self.archive.addfile(info, file_like)
+
+    def append_symlink(self, target: str, archived_name: str) -> None:
+        '''
+        Append a symlink to the archive.
+
+        Parameters:
+            target              symlink target
+            archived_name       file name within the archive
+
+        Returns:
+            None
+        '''
+        info = tarfile.TarInfo()
+
+        info.type = tarfile.SYMTYPE
+        info.name = archived_name
+        info.linkname = target
+
+        self.archive.addfile(info, archived_name)
 
     def list_archive(name: str) -> None:
         '''
