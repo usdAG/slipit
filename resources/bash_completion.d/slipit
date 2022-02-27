@@ -19,8 +19,8 @@ function _slipit() {
     elif [ "$prev" == "--archive-type" ]; then
         opts="${archive_types}"
 
-	elif [[ "$cur" == -* ]]; then
-		opts="--help"
+    elif [[ "$cur" == -* ]]; then
+        opts="--help"
         opts="${opts} --archive-type"
         opts="${opts} --clear"
         opts="${opts} --debug"
@@ -42,7 +42,7 @@ function _slipit() {
     _comp_filter "opts"
     _comp_filter_shorts "opts"
 
-    mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}") 
+    mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}")
     return 0
 }
 
