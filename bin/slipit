@@ -27,7 +27,7 @@ def get_traversals(args, filename: str) -> [str]:
     sequence = args.sequence if args.sequence else f'..{args.separator}'
 
     if args.prefix and not args.prefix.endswith(args.separator):
-        args.prefix += args.seprator
+        args.prefix += args.separator
 
     if args.multi:
 

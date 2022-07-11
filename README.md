@@ -17,7 +17,7 @@ utility with an extended feature set and improved base functionality.
 $ git clone https://github.com/usdAG/slipit
 $ cd slipit
 $ python3 setup.py sdist
-$ pip3 install --user sdist/* 
+$ pip3 install --user dist/* 
 ```
 
 *slipit* also supports autocompletion for *bash*. To take advantage of autocompletion, you need to have the
