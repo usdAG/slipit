@@ -24,7 +24,7 @@ def get_traversals(args, filename: str) -> [str]:
         None
     '''
     traversal_payloads = []
-    sequence = args.sequence if args.sequence else f'..{args.separator}'
+    sequence = args.sequence.replace('{sep}', args.separator) if args.sequence else f'..{args.separator}'
 
     if args.prefix and not args.prefix.endswith(args.separator):
         args.prefix += args.separator
@@ -131,8 +131,8 @@ def get_provider(output_file: str) -> str:
 
 parser = argparse.ArgumentParser(description='''slipit v1.0.0 - Utility for creating ZipSlip archives.''')
 
-parser.add_argument('filename', nargs='*', help='filenames to include into the archive')
 parser.add_argument('archive', help='target archive file')
+parser.add_argument('filename', nargs='*', help='filenames to include into the archive')
 parser.add_argument('--archive-type', dest='type', choices=['zip', 'tar', 'tgz', 'bz2'], help='archive type to use')
 parser.add_argument('--clear', action='store_true', help='clear the specified archive from traversal items')
 parser.add_argument('--debug', action='store_true', help='enable verbose error output')

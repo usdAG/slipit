@@ -34,15 +34,15 @@ autocompletion.
 [user@box ~]$ slipit -h
 usage: slipit [-h] [--archive-type {zip,tar,tgz,bz2}] [--clear] [--debug] [--depth int] [--increment int]
               [--overwrite] [--prefix string] [--multi] [--remove name] [--separator char] [--sequence seq]
-              [--static content] [--symlink target] [filename ...] archive
+              [--static content] [--symlink target] archive [filename ...]
 
 slipit v1.0.0 - Utility for creating ZipSlip archives.
 
 positional arguments:
-  filename              filenames to include into the archive
   archive               target archive file
+  filename              filenames to include into the archive
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --archive-type {zip,tar,tgz,bz2}
                         archive type to use
@@ -60,10 +60,10 @@ optional arguments:
   --symlink target      add as symlink (only available for tar archives)
 ```
 
-*slipit* expects an arbitrary number of input files and the targeted output archive as mandatory command line
+*slipit* expects the targeted output archive and an arbitrary number of input files as mandatory command line
 parameters. All specified input files are appended to the specified archive including a path traversal prefix
 with a depth specified with the `--depth` option (default is 6). The targeted archive format is determined
-automatically depending on the file extension for non existing archives or the mime type for already existing
+automatically depending on the file extension for non existing archives or by the mime type for already existing
 archives. You can also specify the archive type manually by using the `--archive-type` option.
 
 ```console
@@ -76,7 +76,7 @@ example/images/beach.png                       2022-02-02 18:40:16         2112
 example/documents/                             2022-02-02 18:39:48            0
 example/documents/invoice.docx                 2022-02-02 18:39:40         3001
 example/documents/important.docx               2022-02-02 18:39:48          121
-[user@box ~]$ slipit test.txt example.zip 
+[user@box ~]$ slipit example.zip test.txt
 [user@box ~]$ slipit example.zip 
 File Name                                             Modified             Size
 example/                                       2022-02-02 18:39:00            0
@@ -95,7 +95,7 @@ them within the archive. Often times this is not necessary and you just require 
 only the filenames of the specified input files are used within the archive, while their content is set to `<string>`.
 
 ```console
-[user@box ~]$ slipit test2.txt example.zip --static 'HELLO WORLD :D'
+[user@box ~]$ slipit example.zip test2.txt --static 'HELLO WORLD :D'
 [user@box ~]$ slipit example.zip 
 File Name                                             Modified             Size
 example/                                       2022-02-02 18:39:00            0
@@ -127,7 +127,7 @@ example/documents/important.docx               2022-02-02 18:39:48          121
 *slipit* also allows to create an archive containing multiple payloads by using the `--multi` option:
 
 ```console
-[user@box ~]$ slipit test.txt example.zip --static content --multi
+[user@box ~]$ slipit example.zip test.txt --static content --multi
 [user@box ~]$ slipit example.zip 
 File Name                                             Modified             Size
 C:\Windows\test.txt                            2022-02-03 09:35:28            7
@@ -150,8 +150,7 @@ C:\Windows\test.txt                            2022-02-03 09:35:28            7
 
 ----
 
-Currently, the following archive types are supported (just naming their most common
-extension):
+Currently, the following archive types are supported (just naming their most common extension):
 
 * `.zip`
 * `.tar`
