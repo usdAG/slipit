@@ -1,0 +1,15 @@
+tester:
+  name: slipit
+  title: slipit tests
+  error_mode: break
+  description: |-
+    Some basic tests for slipit
+
+  requires:
+    commands:
+      - slipit
+    version:
+      ge: 1.11.0
+
+testers:
+  - ./testcases/*

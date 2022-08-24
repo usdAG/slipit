@@ -1,0 +1,304 @@
+tester:
+  title: Zip Archive Tests
+  description: |-
+    Perform some tests for slipit operating on Zip archives
+
+  id: '01'
+  groups:
+    - zip
+  id_pattern: '01-{:02}'
+
+
+variables:
+  tmpfile: '/tmp/slipit-temporary-file'
+  archive: '/tmp/slipit-temporary-archive.zip'
+
+
+plugins:
+  - tempfile:
+      path: ${tmpfile}
+      content: |-
+          '1234567890'
+  - cleanup:
+      items:
+        - ${archive}
+
+
+tests:
+  - title: Creating an archive
+    description: |-
+      Create a new archive contianing a single zipslip file
+
+    command:
+      - slipit
+      - ${archive}
+      - ${tmpfile}
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive}
+          files:
+            - filename: '..\..\..\..\..\..\slipit-temporary-file'
+              size: 12
+              type: FILE
+
+  - title: Append to an archive
+    description: |-
+      Append another zipslip file to the archive. This time, using
+      some options.
+
+    command:
+      - slipit
+      - ${archive}
+      - 'static-file'
+      - --static
+      - 'Hello World'
+      - --depth
+      - 5
+      - --separator
+      - '/'
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive}
+          files:
+            - filename: '..\..\..\..\..\..\slipit-temporary-file'
+              size: 12
+              type: FILE
+            - filename: '../../../../../static-file'
+              size: 11
+              type: FILE
+
+  - title: Append incrementing depth
+    description: |-
+      Append another file with incremepting depth
+
+    command:
+      - slipit
+      - ${archive}
+      - 'incrementing'
+      - --static
+      - 'Hello World :D'
+      - --depth
+      - 3
+      - --separator
+      - '|'
+      - --sequence
+      - '._.{sep}'
+      - --increment
+      - 1
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive}
+          files:
+            - filename: '..\..\..\..\..\..\slipit-temporary-file'
+              size: 12
+              type: FILE
+            - filename: '../../../../../static-file'
+              size: 11
+              type: FILE
+            - filename: '._.|incrementing'
+              size: 14
+              type: FILE
+            - filename: '._.|._.|incrementing'
+              size: 14
+              type: FILE
+            - filename: '._.|._.|._.|incrementing'
+              size: 14
+              type: FILE
+
+  - title: Remove some files
+    description: |-
+      Remove some files based on a pattern
+
+    command:
+      - slipit
+      - ${archive}
+      - --remove
+      - '._.|._.|*'
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive}
+          files:
+            - filename: '..\..\..\..\..\..\slipit-temporary-file'
+              size: 12
+              type: FILE
+            - filename: '../../../../../static-file'
+              size: 11
+              type: FILE
+            - filename: '._.|incrementing'
+              size: 14
+              type: FILE
+          invert:
+            - '._.|._.|incrementing'
+            - '._.|._.|._.|incrementing'
+            
+  - title: Clear archive
+    description: |-
+      Clear the default traversal payload from the archive
+
+    command:
+      - slipit
+      - ${archive}
+      - --clear
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive}
+          files:
+            - filename: '../../../../../static-file'
+              size: 11
+              type: FILE
+            - filename: '._.|incrementing'
+              size: 14
+              type: FILE
+          invert:
+            - '._.|._.|incrementing'
+            - '._.|._.|._.|incrementing'
+            - '..\..\..\..\..\..\slipit-temporary-file'
+
+  - title: Adding a symlink
+    description: |-
+      Attempt to add a symlink which should result in an error
+
+    command:
+      - slipit
+      - ${archive}
+      - link
+      - --symlink
+      - '/etc/passwd'
+
+    validators:
+      - error: True
+      - contains:
+          values:
+            - 'The requested feature is not implemented for the specified archive type'
+
+
+  - title: Overwrite the archive
+    description: |-
+      Overwrite the archive
+
+    command:
+      - slipit
+      - ${archive}
+      - 'incrementing'
+      - --static
+      - 'Hello World :D'
+      - --depth
+      - 3
+      - --increment
+      - 1
+      - --overwrite
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive}
+          files:
+            - filename: '..\incrementing'
+              size: 14
+              type: FILE
+            - filename: '..\..\incrementing'
+              size: 14
+              type: FILE
+            - filename: '..\..\..\incrementing'
+              size: 14
+              type: FILE
+          invert:
+            - '../../../../../static-file'
+
+  - title: Add prefixed files
+    description: |-
+      Add some zipslip payloads using a prefix
+
+    command:
+      - slipit
+      - ${archive}
+      - 'incrementing'
+      - --static
+      - 'Hello World :D'
+      - --depth
+      - 3
+      - --increment
+      - 1
+      - --overwrite
+      - --prefix
+      - Windows
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive}
+          files:
+            - filename: '..\Windows\incrementing'
+              size: 14
+              type: FILE
+            - filename: '..\..\Windows\incrementing'
+              size: 14
+              type: FILE
+            - filename: '..\..\..\Windows\incrementing'
+              size: 14
+              type: FILE
+          invert:
+            - '../../../../../static-file'
+            - '..\..\..\incrementing'
+
+  - title: Create a multi archive
+    description: |-
+      Create an archive using the --multi option
+
+    command:
+      - slipit
+      - ${archive}
+      - ${tmpfile}
+      - --overwrite
+      - --multi
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive}
+          files:
+            - filename: 'C:\Windows\slipit-temporary-file'
+              size: 12
+              type: FILE
+            - filename: '\\10.10.10.1\share\slipit-temporary-file'
+              size: 12
+              type: FILE
+            - filename: 'root/slipit-temporary-file'
+              size: 12
+              type: FILE
+
+  - title: List the archive
+    description: |-
+      List the archive using slipit
+
+    command:
+      - slipit
+      - ${archive}
+
+    validators:
+      - error: False
+      - contains:
+          values:
+            - 'C:\Windows\slipit-temporary-file'
+            - '\\10.10.10.1\share\slipit-temporary-file' 
+            - 'root/slipit-temporary-file' 
+            - '../slipit-temporary-file' 
+            - '..\slipit-temporary-file' 
+            - '../../slipit-temporary-file' 
+            - '..\..\slipit-temporary-file' 
+            - '../../../slipit-temporary-file' 
+            - '..\..\..\slipit-temporary-file' 
+            - '../../../../slipit-temporary-file' 
+            - '..\..\..\..\slipit-temporary-file' 
+            - '../../../../../slipit-temporary-file' 
+            - '..\..\..\..\..\slipit-temporary-file' 
