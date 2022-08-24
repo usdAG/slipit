@@ -41,7 +41,7 @@ def get_traversals(args, filename: str) -> [str]:
 
     elif args.increment is not None:
 
-        for ctr in range(args.increment, args.depth):
+        for ctr in range(args.increment, args.depth + 1):
             traversal_payloads.append(sequence * ctr + args.prefix + filename)
 
     else:
@@ -153,6 +153,7 @@ def main():
     Main method :)
     '''
     archive = None
+    error_code = 0
     args = parser.parse_args()
     provider = ArchiveProvider.get_provider_ext(args.type) if args.type else get_provider(args.archive)
 
@@ -190,19 +191,26 @@ def main():
 
     except FileNotFoundError as e:
         print(f'[-] Unable to find the specified file: {e}')
+        error_code = 1
 
     except NotImplementedError:
         print('[-] The requested feature is not implemented for the specified archive type.')
+        error_code = 2
 
     except Exception as e:
         print('[-] Unexcepted exception occured.')
         print(f'[-] {e}')
+
         if args.debug:
             traceback.print_exc()
+
+        error_code = 3
 
     finally:
         if archive:
             archive.close_archive()
+
+    sys.exit(error_code)
 
 
 main()
