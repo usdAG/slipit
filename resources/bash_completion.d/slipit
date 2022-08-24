@@ -13,7 +13,7 @@ function _slipit() {
 
     archive_types="zip tar tgz bz2"
 
-    if _comp_contains "--depth --increment --prefix --separator --sequence --static" $prev; then
+    if _comp_contains "--depth --increment --prefix --remove --separator --sequence --static" $prev; then
         return 0
 
     elif [ "$prev" == "--archive-type" ]; then
@@ -29,6 +29,7 @@ function _slipit() {
         opts="${opts} --overwrite"
         opts="${opts} --prefix"
         opts="${opts} --multi"
+        opts="${opts} --remove"
         opts="${opts} --separator"
         opts="${opts} --sequence"
         opts="${opts} --static"
