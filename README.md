@@ -6,12 +6,12 @@
 It is basically a successor of the famous [evilarc](https://github.com/ptoomey3/evilarc)
 utility with an extended feature set and improved base functionality.
 
-![](https://github.com/usdAG/slipit/workflows/master%20Python%20CI/badge.svg?branch=master)
+![](https://github.com/usdAG/slipit/workflows/main%20Python%20CI/badge.svg?branch=main)
 ![](https://github.com/usdAG/slipit/workflows/develop%20Python%20CI/badge.svg?branch=develop)
 [![](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/usdAG/slipit/releases)
 [![](https://img.shields.io/badge/build%20system-pip-blue)](https://pypi.org/project/slipit)
 ![](https://img.shields.io/badge/python-9%2b-blue)
-[![](https://img.shields.io/badge/license-GPL%20v3.0-blue)](https://github.com/usdAG/slipit/blob/master/LICENSE)
+[![](https://img.shields.io/badge/license-GPL%20v3.0-blue)](https://github.com/usdAG/slipit/blob/main/LICENSE)
 
 ```console
 [user@host ~]$ slipit archive.tar.gz
