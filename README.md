@@ -38,13 +38,19 @@ utility with an extended feature set and improved base functionality.
 
 ----
 
-*slipit* can be installed via [pip](https://pypi.org/project/pip/) by running the following commands:
+*slipit* can be installed via [pip](https://pypi.org/project/pip/):
 
 ```console
-$ git clone https://github.com/usdAG/slipit
-$ cd slipit
-$ python3 setup.py sdist
-$ pip3 install --user dist/* 
+[user@host ~]$ pip3 install --user slipit
+```
+
+You can also build slipit from source by running the following commands:
+
+```console
+[user@host ~]$ git clone https://github.com/usdAG/slipit
+[user@host ~]$ cd slipit
+[user@host slipit]$ python3 setup.py sdist
+[user@host slipit]$ pip3 install --user dist/*
 ```
 
 *slipit* also supports autocompletion for *bash*. To take advantage of autocompletion, you need to have the
