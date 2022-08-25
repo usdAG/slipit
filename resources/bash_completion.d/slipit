@@ -13,14 +13,14 @@ function _slipit() {
 
     archive_types="zip tar tgz bz2"
 
-    if _comp_contains "--depth --increment --prefix --separator --sequence --static" $prev; then
+    if _comp_contains "--depth --increment --prefix --remove --separator --sequence --static" $prev; then
         return 0
 
     elif [ "$prev" == "--archive-type" ]; then
         opts="${archive_types}"
 
-	elif [[ "$cur" == -* ]]; then
-		opts="--help"
+    elif [[ "$cur" == -* ]]; then
+        opts="--help"
         opts="${opts} --archive-type"
         opts="${opts} --clear"
         opts="${opts} --debug"
@@ -29,9 +29,11 @@ function _slipit() {
         opts="${opts} --overwrite"
         opts="${opts} --prefix"
         opts="${opts} --multi"
+        opts="${opts} --remove"
         opts="${opts} --separator"
         opts="${opts} --sequence"
         opts="${opts} --static"
+        opts="${opts} --symlink"
 
     else
         _filedir
@@ -41,7 +43,7 @@ function _slipit() {
     _comp_filter "opts"
     _comp_filter_shorts "opts"
 
-    mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}") 
+    mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}")
     return 0
 }
 

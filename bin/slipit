@@ -24,10 +24,10 @@ def get_traversals(args, filename: str) -> [str]:
         None
     '''
     traversal_payloads = []
-    sequence = args.sequence if args.sequence else f'..{args.separator}'
+    sequence = args.sequence.replace('{sep}', args.separator) if args.sequence else f'..{args.separator}'
 
     if args.prefix and not args.prefix.endswith(args.separator):
-        args.prefix += args.seprator
+        args.prefix += args.separator
 
     if args.multi:
 
@@ -41,7 +41,7 @@ def get_traversals(args, filename: str) -> [str]:
 
     elif args.increment is not None:
 
-        for ctr in range(args.increment, args.depth):
+        for ctr in range(args.increment, args.depth + 1):
             traversal_payloads.append(sequence * ctr + args.prefix + filename)
 
     else:
@@ -131,8 +131,8 @@ def get_provider(output_file: str) -> str:
 
 parser = argparse.ArgumentParser(description='''slipit v1.0.0 - Utility for creating ZipSlip archives.''')
 
-parser.add_argument('input', nargs='*', default=[], action='extend', help='input files to include into the archive')
 parser.add_argument('archive', help='target archive file')
+parser.add_argument('filename', nargs='*', help='filenames to include into the archive')
 parser.add_argument('--archive-type', dest='type', choices=['zip', 'tar', 'tgz', 'bz2'], help='archive type to use')
 parser.add_argument('--clear', action='store_true', help='clear the specified archive from traversal items')
 parser.add_argument('--debug', action='store_true', help='enable verbose error output')
@@ -141,9 +141,11 @@ parser.add_argument('--increment', metavar='int', type=int, help='add incrementa
 parser.add_argument('--overwrite', action='store_true', help='overwrite the target archive instead of appending to it')
 parser.add_argument('--prefix', metavar='string', default='', help='prefix to use before the file name')
 parser.add_argument('--multi', action='store_true', help='create an archive containing multiple payloads')
+parser.add_argument('--remove', metavar='name', help='remove files from the archive (glob matching)')
 parser.add_argument('--separator', metavar='char', default='\\', help='path separator (default=\\)')
 parser.add_argument('--sequence', metavar='seq', help='use a custom traversal sequence (default=..{sep})')
 parser.add_argument('--static', metavar='content', help='use static content for each input file')
+parser.add_argument('--symlink', metavar='target', help='add as symlink (only available for tar archives)')
 
 
 def main():
@@ -151,6 +153,7 @@ def main():
     Main method :)
     '''
     archive = None
+    error_code = 0
     args = parser.parse_args()
     provider = ArchiveProvider.get_provider_ext(args.type) if args.type else get_provider(args.archive)
 
@@ -160,37 +163,54 @@ def main():
             provider.clear_archive(args.archive, payload)
             return
 
-        if len(args.input) < 1:
+        if args.remove:
+            provider.remove_files(args.archive, args.remove)
+            return
+
+        if len(args.filename) < 1:
             provider.list_archive(args.archive)
             return
 
-        if not args.static:
-            check_readable(args.input)
+        if not args.static and not args.symlink:
+            check_readable(args.filename)
 
         archive = provider.create(args.archive) if args.overwrite else provider.open(args.archive)
 
-        for file in args.input:
+        for file in args.filename:
 
             payloads = get_traversals(args, Path(file).name)
 
             if args.static:
                 archive.append_blobs(args.static.encode('utf-8'), payloads)
 
+            elif args.symlink:
+                archive.append_symlinks(args.symlink, payloads)
+
             else:
                 archive.append_files(file, payloads)
 
     except FileNotFoundError as e:
         print(f'[-] Unable to find the specified file: {e}')
+        error_code = 1
+
+    except NotImplementedError:
+        print('[-] The requested feature is not implemented for the specified archive type.')
+        error_code = 2
 
     except Exception as e:
         print('[-] Unexcepted exception occured.')
         print(f'[-] {e}')
+
         if args.debug:
             traceback.print_exc()
+
+        error_code = 3
 
     finally:
         if archive:
             archive.close_archive()
+
+    sys.exit(error_code)
 
 
 main()
