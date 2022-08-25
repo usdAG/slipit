@@ -13,6 +13,27 @@ utility with an extended feature set and improved base functionality.
 ![](https://img.shields.io/badge/python-9%2b-blue)
 [![](https://img.shields.io/badge/license-GPL%20v3.0-blue)](https://github.com/usdAG/slipit/blob/master/LICENSE)
 
+```console
+[user@host ~]$ slipit archive.tar.gz
+?rw-r--r-- user/user         24 2022-08-25 10:57:35 legit.txt
+[user@host ~]$ slipit archive.tar.gz file1.txt file2.txt
+[user@host ~]$ slipit archive.tar.gz
+?rw-r--r-- user/user         24 2022-08-25 10:57:35 legit.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\..\..\..\..\..\file1.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:44 ..\..\..\..\..\..\file2.txt
+[user@host ~]$ slipit archive.tar.gz file1.txt --depth 3 --increment 1
+[user@host ~]$ slipit archive.tar.gz
+?rw-r--r-- user/user         24 2022-08-25 10:57:35 legit.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\..\..\..\..\..\file1.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:44 ..\..\..\..\..\..\file2.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\file1.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\..\file1.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\..\..\file1.txt
+[user@host ~]$ slipit archive.tar.gz --clear
+[user@host ~]$ slipit archive.tar.gz
+?rw-r--r-- user/user         24 2022-08-25 10:57:35 legit.txt
+```
+
 ### Installation
 
 ----
