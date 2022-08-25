@@ -5,12 +5,15 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='slipit',
-    version='0.9.0',
+    version='1.0.0',
     url='https://github.com/usdAG/slipit',
     author='Tobias Neitzel (@qtc_de)',
     description='slipit - Utility for creating archives with path traversal elements',
     long_description=long_description,
     long_description_content_type='text/markdown',
+    install_requires=[
+                        'python-magic',
+                     ],
     packages=[
                 'slipit',
                 'slipit.provider'
