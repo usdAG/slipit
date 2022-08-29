@@ -155,7 +155,7 @@ def main():
     archive = None
     error_code = 0
     args = parser.parse_args()
-    provider = ArchiveProvider.get_provider_ext(args.type) if args.type else get_provider(args.archive)
+    provider = ArchiveProvider.get_provider_ext('.' + args.type) if args.type else get_provider(args.archive)
 
     try:
         if args.clear:
