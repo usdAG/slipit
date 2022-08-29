@@ -12,6 +12,7 @@ tester:
 variables:
   tmpfile: '/tmp/slipit-temporary-file'
   archive: '/tmp/slipit-temporary-archive.zip'
+  archive2: '/tmp/slipit-temporary-archive.tar'
 
 
 plugins:
@@ -22,6 +23,7 @@ plugins:
   - cleanup:
       items:
         - ${archive}
+        - ${archive2}
 
 
 tests:
@@ -302,3 +304,39 @@ tests:
             - '..\..\..\..\slipit-temporary-file' 
             - '../../../../../slipit-temporary-file' 
             - '..\..\..\..\..\slipit-temporary-file' 
+
+  - title: Create an archive with explicit type
+    description: |-
+      Create a new archive using --archive-type
+
+    command:
+      - slipit
+      - ${archive2}
+      - ${tmpfile}
+      - --archive-type
+      - zip
+
+    validators:
+      - error: False
+      - zip_contains:
+          archive: ${archive2}
+          files:
+            - filename: '..\..\..\..\..\..\slipit-temporary-file'
+              size: 12
+              type: FILE
+
+  - title: List archive with explicit type
+    description: |-
+      List an archive using --archive-type
+
+    command:
+      - slipit
+      - ${archive2}
+      - --archive-type
+      - zip
+
+    validators:
+      - error: False
+      - contains:
+          values:
+            - '..\..\..\..\..\..\slipit-temporary-file'

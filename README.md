@@ -8,7 +8,7 @@ utility with an extended feature set and improved base functionality.
 
 ![](https://github.com/usdAG/slipit/workflows/main%20Python%20CI/badge.svg?branch=main)
 ![](https://github.com/usdAG/slipit/workflows/develop%20Python%20CI/badge.svg?branch=develop)
-[![](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/usdAG/slipit/releases)
+[![](https://img.shields.io/badge/version-1.0.1-blue)](https://github.com/usdAG/slipit/releases)
 [![](https://img.shields.io/badge/build%20system-pip-blue)](https://pypi.org/project/slipit)
 ![](https://img.shields.io/badge/python-9%2b-blue)
 [![](https://img.shields.io/badge/license-GPL%20v3.0-blue)](https://github.com/usdAG/slipit/blob/main/LICENSE)
@@ -69,7 +69,7 @@ usage: slipit [-h] [--archive-type {zip,tar,tgz,bz2}] [--clear] [--debug] [--dep
               [--overwrite] [--prefix string] [--multi] [--remove name] [--separator char] [--sequence seq]
               [--static content] [--symlink target] archive [filename ...]
 
-slipit v1.0.0 - Utility for creating ZipSlip archives.
+slipit v1.0.1 - Utility for creating ZipSlip archives.
 
 positional arguments:
   archive               target archive file
