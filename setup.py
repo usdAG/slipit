@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='slipit',
-    version='1.0.0',
+    version='1.0.1',
     url='https://github.com/usdAG/slipit',
     author='Tobias Neitzel (@qtc_de)',
     description='slipit - Utility for creating archives with path traversal elements',

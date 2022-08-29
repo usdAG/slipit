@@ -129,7 +129,7 @@ def get_provider(output_file: str) -> str:
         sys.exit(1)
 
 
-parser = argparse.ArgumentParser(description='''slipit v1.0.0 - Utility for creating ZipSlip archives.''')
+parser = argparse.ArgumentParser(description='''slipit v1.0.1 - Utility for creating ZipSlip archives.''')
 
 parser.add_argument('archive', help='target archive file')
 parser.add_argument('filename', nargs='*', help='filenames to include into the archive')
